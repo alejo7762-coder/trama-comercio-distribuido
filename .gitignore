@@ -1,0 +1,12 @@
+# Entornos y dependencias de Python
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+*.pyc
+
+# Variables de entorno reales (nunca subir credenciales)
+backend/.env
+
+# Sistema
+.DS_Store
+Thumbs.db
