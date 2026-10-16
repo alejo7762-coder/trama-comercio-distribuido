@@ -1,13 +1,20 @@
 """
 Punto de entrada del backend de Trama.
 
-Fase 3: solo se establece la estructura inicial (conexión a la base
-de datos y un router de verificación). Las rutas de negocio del
-sistema transaccional se implementarán en la siguiente fase.
+Estado actual: estructura base (conexión a SQL Server y verificación de
+estado). Las rutas de negocio se agregan fase por fase.
 """
 
+import logging
+
 from fastapi import FastAPI
+
 from app.routers import health
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s [%(name)s] %(message)s",
+)
 
 app = FastAPI(
     title="Trama API",
@@ -18,6 +25,6 @@ app = FastAPI(
 app.include_router(health.router, tags=["Estado del sistema"])
 
 
-@app.get("/")
+@app.get("/", tags=["Estado del sistema"])
 def root():
-    return {"mensaje": "API de Trama en construcción — Fase 3"}
+    return {"mensaje": "API de Trama en construcción", "documentacion": "/docs"}
