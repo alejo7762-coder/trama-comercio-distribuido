@@ -81,3 +81,21 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def confirmar(db) -> None:
+    """
+    Confirma la transacción de la sesión. Si la base de datos rechaza algún dato
+    (restricción UNIQUE, CHECK o FOREIGN KEY) deshace todo y lanza ConflictoError.
+    """
+    from sqlalchemy.exc import IntegrityError
+    from app.exceptions import ConflictoError
+
+    try:
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+        raise ConflictoError("La base de datos rechazó la operación por una restricción de integridad") from exc
+    except Exception:
+        db.rollback()
+        raise
