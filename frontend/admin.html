@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administrar productos — Trama</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<header>
+  <div class="logo"><span class="logo-mark"></span>TRAMA</div>
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="catalogo.html">Catálogo</a>
+    <a href="admin.html" aria-current="page">Administrar productos</a>
+    <a href="/docs" target="_blank" rel="noopener">API (docs)</a>
+  </nav>
+  <span id="estado-api" class="estado-api" role="status">Verificando API…</span>
+</header>
+<main class="page">
+  <div class="section-head">
+    <div class="kicker">RF05 · Gestionar productos e inventario</div>
+    <h2>Registrar un producto</h2>
+    <p>Los datos se validan en el formulario, en la API y en la base de datos antes de guardarse.</p>
+  </div>
+  <div class="alerta aviso">Esta pantalla aún no exige inicio de sesión. Se restringirá al rol administrador cuando se implemente la autenticación.</div>
+  <div id="aviso" class="alerta" role="alert" hidden></div>
+
+  <form id="form-producto" class="form-panel" novalidate>
+    <div class="form-grid">
+      <label class="campo completo">Nombre *
+        <input id="nombre" name="nombre" type="text" maxlength="150" required>
+        <span class="error"></span>
+      </label>
+      <label class="campo">Categoría *
+        <select id="categoria_id" name="categoria_id" required><option value="">Seleccione…</option></select>
+        <span class="error"></span>
+      </label>
+      <label class="campo">Precio (COP) *
+        <input id="precio" name="precio" type="text" inputmode="decimal" placeholder="49900">
+        <span class="ayuda">Sin puntos de miles. Decimales con punto.</span>
+        <span class="error"></span>
+      </label>
+      <label class="campo">Stock inicial *
+        <input id="stock" name="stock" type="text" inputmode="numeric" placeholder="10">
+        <span class="error"></span>
+      </label>
+      <label class="campo completo">Descripción
+        <textarea id="descripcion" name="descripcion" rows="3" maxlength="500"></textarea>
+        <span class="error"></span>
+      </label>
+    </div>
+    <p style="margin:20px 0 0"><button id="guardar" class="btn btn-primary" type="submit">Guardar producto</button></p>
+  </form>
+
+  <div class="section-head"><h2>Inventario actual</h2></div>
+  <div class="tabla-scroll">
+    <table class="tabla">
+      <thead><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th class="num">Precio</th><th class="num">Stock</th></tr></thead>
+      <tbody id="tabla-productos"><tr><td colspan="5">Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</main>
+
+<footer>
+  <span>Trama — Proyecto de Sistemas Transaccionales, UMB</span>
+  <span class="mono">v0.2 · segundo avance</span>
+</footer>
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

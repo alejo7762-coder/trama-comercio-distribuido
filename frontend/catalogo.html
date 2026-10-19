@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo — Trama</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<header>
+  <div class="logo"><span class="logo-mark"></span>TRAMA</div>
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="catalogo.html" aria-current="page">Catálogo</a>
+    <a href="admin.html">Administrar productos</a>
+    <a href="/docs" target="_blank" rel="noopener">API (docs)</a>
+  </nav>
+  <span id="estado-api" class="estado-api" role="status">Verificando API…</span>
+</header>
+<main class="page">
+  <div class="section-head">
+    <div class="kicker">RF04 · Consultar catálogo</div>
+    <h2>Catálogo de productos</h2>
+    <p>Productos leídos en tiempo real desde SQL Server a través de la API de Trama.</p>
+  </div>
+  <div class="toolbar">
+    <label class="campo">Buscar por nombre
+      <input id="buscar" type="search" placeholder="Ej. teclado" autocomplete="off" maxlength="100">
+    </label>
+    <label class="campo">Categoría
+      <select id="categoria"><option value="">Todas</option></select>
+    </label>
+    <span id="conteo" class="conteo" aria-live="polite"></span>
+  </div>
+  <div id="productos" class="productos" aria-live="polite"></div>
+</main>
+
+<footer>
+  <span>Trama — Proyecto de Sistemas Transaccionales, UMB</span>
+  <span class="mono">v0.2 · segundo avance</span>
+</footer>
+<script src="js/api.js"></script>
+<script src="js/catalogo.js"></script>
+</body>
+</html>
