@@ -31,6 +31,7 @@ class Producto(Base):
     Stock=Column(Integer,nullable=False)
     CategoriaID=Column(Integer,ForeignKey("Categorias.CategoriaID"),nullable=False)
     FechaCreacion=Column(DateTime,server_default=func.now())
+    Activo=Column(Boolean,nullable=False,default=True,server_default="1")
     categoria=relationship("Categoria")
 
 class Carrito(Base):
