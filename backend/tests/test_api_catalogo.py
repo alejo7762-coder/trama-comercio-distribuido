@@ -138,3 +138,93 @@ class TestInterfazWeb:
     def test_raiz_redirige_a_la_interfaz(self, client):
         r = client.get("/", follow_redirects=False)
         assert r.status_code in (302, 307) and r.headers["location"] == "/app/"
+
+
+class TestComercio:
+    def test_registro_login_carrito_checkout_y_stock(self, client, monkeypatch):
+        import app.routers.pedidos as modulo_pedidos
+        monkeypatch.setattr(modulo_pedidos, "enviar_confirmacion", lambda *args: True)
+        registro = client.post("/auth/register", json={
+            "nombre": "Cliente Prueba",
+            "correo": "cliente.prueba@example.com",
+            "password": "UnaClaveSegura123!",
+            "telefono": "3001234567",
+            "direccion": "Calle 10 # 20-30",
+        })
+        assert registro.status_code == 201, registro.text
+        token = registro.json()["access_token"]
+        headers = {"Authorization": "Bearer " + token}
+        assert registro.json()["usuario"]["rol"] == "CLIENTE"
+
+        login = client.post("/auth/login", json={
+            "correo": "cliente.prueba@example.com",
+            "password": "UnaClaveSegura123!",
+        })
+        assert login.status_code == 200
+        assert client.post("/auth/login", json={
+            "correo": "cliente.prueba@example.com",
+            "password": "incorrecta",
+        }).status_code == 401
+
+        cid = crear_categoria(client, "Hogar")
+        creado = client.post("/productos", json=producto(cid, nombre="Lámpara", precio="50000.00", stock=4))
+        assert creado.status_code == 201, creado.text
+        pid = creado.json()["producto_id"]
+
+        agregado = client.post("/carrito/items", json={"producto_id": pid, "cantidad": 2}, headers=headers)
+        assert agregado.status_code == 201, agregado.text
+        assert agregado.json()["items"][0]["cantidad"] == 2
+        assert agregado.json()["total"] == "100000.00"
+
+        pedido = client.post("/pedidos/checkout", json={
+            "direccion_envio": "Carrera 7 # 10-20",
+            "telefono_contacto": "3007654321",
+            "metodo_pago": "CONTRAENTREGA",
+        }, headers=headers)
+        assert pedido.status_code == 201, pedido.text
+        datos = pedido.json()
+        assert datos["total"] == "100000.00"
+        assert datos["email_enviado"] is True
+        assert datos["items"][0]["cantidad"] == 2
+
+        productos = client.get("/productos").json()
+        lampara = next(p for p in productos if p["producto_id"] == pid)
+        assert lampara["stock"] == 2
+        carrito = client.get("/carrito", headers=headers)
+        assert carrito.status_code == 200 and carrito.json()["items"] == []
+        historial = client.get("/pedidos/mis-pedidos", headers=headers)
+        assert historial.status_code == 200 and len(historial.json()) == 1
+
+    def test_registro_rechaza_correo_duplicado(self, client):
+        datos = {
+            "nombre": "Cliente Prueba",
+            "correo": "duplicado@example.com",
+            "password": "UnaClaveSegura123!",
+            "telefono": "3001234567",
+            "direccion": "Calle 10 # 20-30",
+        }
+        assert client.post("/auth/register", json=datos).status_code == 201
+        assert client.post("/auth/register", json=datos).status_code == 409
+
+    def test_checkout_rechaza_stock_insuficiente_sin_descontar(self, client):
+        registro = client.post("/auth/register", json={
+            "nombre": "Cliente Stock",
+            "correo": "stock@example.com",
+            "password": "UnaClaveSegura123!",
+            "telefono": "3001234567",
+            "direccion": "Calle 10 # 20-30",
+        })
+        headers = {"Authorization": "Bearer " + registro.json()["access_token"]}
+        cid = crear_categoria(client, "Deportes")
+        creado = client.post("/productos", json=producto(cid, nombre="Balón", precio="80000.00", stock=1))
+        pid = creado.json()["producto_id"]
+        assert client.post("/carrito/items", json={"producto_id": pid, "cantidad": 1}, headers=headers).status_code == 201
+        # Simula que otra compra agotó el inventario antes de confirmar este carrito.
+        assert client.patch(f"/productos/{pid}", json={"stock": 0}).status_code == 200
+        pedido = client.post("/pedidos/checkout", json={
+            "direccion_envio": "Carrera 7 # 10-20",
+            "telefono_contacto": "3007654321",
+            "metodo_pago": "CONTRAENTREGA",
+        }, headers=headers)
+        assert pedido.status_code == 409
+        assert client.get("/productos").json()[0]["stock"] == 0
