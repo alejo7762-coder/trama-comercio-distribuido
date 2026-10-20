@@ -61,4 +61,5 @@ class ProductoRead(BaseModel):
     stock: int = Field(validation_alias="Stock")
     categoria_id: int = Field(validation_alias="CategoriaID")
     fecha_creacion: Optional[datetime] = Field(default=None, validation_alias="FechaCreacion")
+    activo: bool = Field(default=True, validation_alias="Activo")
     categoria: Optional[CategoriaEnProducto] = None
