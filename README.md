@@ -1,93 +1,126 @@
-# Trama — Sistema Transaccional de Comercio Electrónico
+# Trama — Sistema transaccional de comercio electrónico
 
-Proyecto desarrollado para la asignatura **Sistemas Transaccionales**, Universidad Manuela Beltrán (UMB).
+Proyecto académico de **Sistemas Transaccionales**, Universidad Manuela Beltrán (UMB).
 
-Sistema distribuido para una plataforma de comercio electrónico, orientado a la gestión de catálogo, carrito, pedidos y pagos en tiempo real.
+Trama es un prototipo de comercio electrónico con una API REST en FastAPI, SQL Server como base de datos prevista para ejecución local y una interfaz web servida por la misma API. El alcance funcional implementado actualmente es el catálogo: consulta y filtrado de productos, consulta/creación de categorías, registro de productos y actualización parcial de inventario.
 
-## Estado del proyecto
+> **Estado y límites:** las páginas de catálogo y administración funcionan sin autenticación. No se deben exponer en Internet ni usar con datos reales hasta implementar y verificar autenticación/autorización, gestión segura de credenciales y los flujos transaccionales restantes. Carrito, pedidos, pagos reales, facturación, notificaciones, Saga, mensajería y asistente IA forman parte del diseño/alcance futuro; no se deben presentar como funciones ya implementadas.
 
-- ✅ **Fase 1** — Prototipo de interfaz inicial (`index.html`).
-- ✅ **Fase 3** — Base de datos relacional inicial y estructura base del backend.
-- ⏳ Próximas fases: operaciones CRUD, lógica transaccional y conexión completa entre frontend, backend y base de datos.
+## Estructura
 
-## Estructura del repositorio
-
-```
+```text
 trama-comercio-distribuido/
-├── index.html              # Prototipo de interfaz (Fase 1)
 ├── database/
-│   ├── schema.sql           # Creación de la base de datos y tablas
-│   └── seed.sql              # Datos iniciales de prueba
+│   ├── schema.sql
+│   └── seed.sql
 ├── backend/
 │   ├── app/
-│   │   ├── main.py           # Punto de entrada de la API (FastAPI)
-│   │   ├── database.py       # Configuración de conexión a SQL Server
-│   │   ├── models.py         # Modelos ORM (reflejan las tablas de schema.sql)
+│   │   ├── main.py
+│   │   ├── database.py
+│   │   ├── models.py
+│   │   ├── enums.py
+│   │   ├── exceptions.py
+│   │   ├── repositories/
+│   │   ├── schemas/
 │   │   └── routers/
-│   │       └── health.py     # Endpoint de verificación de estado
+│   ├── tests/
+│   ├── scripts/check_env.py
 │   ├── requirements.txt
 │   └── .env.example
+├── frontend/
+│   ├── index.html
+│   ├── catalogo.html
+│   ├── admin.html
+│   ├── css/estilos.css
+│   └── js/
 └── README.md
 ```
 
-## Modelo relacional
+## Requisitos
 
-Entidades principales: `Usuarios`, `Categorias`, `Productos`, `Carritos`, `CarritoItems`, `Pedidos`, `PedidoItems`, `Pagos`, `Facturas`, `Notificaciones`.
+- Python 3.10 o superior.
+- SQL Server / SQL Server Express y un driver ODBC compatible (el ejemplo usa ODBC Driver 18).
+- Git y una terminal.
 
-Relaciones clave:
-- Un usuario tiene **un** carrito (`Carritos.UsuarioID` es único).
-- Un carrito tiene muchos `CarritoItems`, cada uno asociado a un producto.
-- Un usuario puede tener muchos pedidos; cada pedido tiene muchos `PedidoItems`.
-- Cada pedido tiene **un único** pago y **una única** factura asociada (relaciones 1 a 1).
-- Las notificaciones se asocian a un usuario y, opcionalmente, a un pedido.
+## 1. Preparar la base de datos
 
-## 1. Cómo ejecutar la base de datos
+1. Abre SQL Server Management Studio (SSMS) o Azure Data Studio y conéctate a tu instancia.
+2. Ejecuta `database/schema.sql`.
+3. Para cargar datos de demostración, revisa y ejecuta `database/seed.sql` **una sola vez** sobre una base limpia. El script de seed puede fallar si ya existen registros con las mismas claves/correos.
+4. Comprueba las tablas y los datos con consultas SELECT.
 
-Requisitos: tener **SQL Server** instalado (o SQL Server Express) y una herramienta de administración como **SQL Server Management Studio (SSMS)** o Azure Data Studio.
+No uses las credenciales de ejemplo del seed en un sistema real. Los valores de contraseña de demostración no son hashes válidos para autenticación.
 
-1. Abre SSMS y conéctate a tu instancia local de SQL Server.
-2. Abre el archivo `database/schema.sql` y ejecútalo completo (botón *Execute* o F5). Esto crea la base de datos `TramaDB` y todas sus tablas.
-3. Abre el archivo `database/seed.sql` y ejecútalo para insertar los datos iniciales de prueba.
-4. Verifica que todo quedó creado correctamente:
-   ```sql
-   USE TramaDB;
-   SELECT * FROM Usuarios;
-   SELECT * FROM Productos;
-   ```
+## 2. Configurar y ejecutar la API
 
-## 2. Cómo ejecutar el backend
+Desde la raíz del repositorio:
 
-Requisitos: **Python 3.10+** instalado y el **ODBC Driver 17 (o 18) for SQL Server** instalado en tu sistema operativo.
+```bash
+cd backend
+python -m venv .venv
+# Windows PowerShell:
+.venv\\Scripts\\Activate.ps1
+# Windows CMD: .venv\\Scripts\\activate.bat
+# macOS/Linux: source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
 
-1. Entra a la carpeta del backend:
-   ```bash
-   cd backend
-   ```
-2. Crea y activa un entorno virtual:
-   ```bash
-   python -m venv venv
-   # Windows:
-   venv\Scripts\activate
-   # Mac/Linux:
-   source venv/bin/activate
-   ```
-3. Instala las dependencias:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Copia el archivo de variables de entorno y complétalo con tus datos reales de conexión:
-   ```bash
-   cp .env.example .env
-   ```
-5. Ejecuta el servidor de desarrollo:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-6. Abre en el navegador:
-   - `http://127.0.0.1:8000/health` → confirma que la API está viva.
-   - `http://127.0.0.1:8000/health/db` → confirma que la API se conecta correctamente a `TramaDB`.
-   - `http://127.0.0.1:8000/docs` → documentación interactiva generada automáticamente por FastAPI.
+Copia `.env.example` como `.env` y configura servidor, base de datos, driver y método de autenticación según tu instalación. No subas el archivo `.env` ni secretos a GitHub.
 
-## Alcance de esta fase
+En Windows:
 
-Esta entrega establece la base técnica del sistema: creación de la base de datos, definición de tablas con llaves primarias y foráneas, restricciones de integridad, datos de prueba, y la organización inicial del backend con su conexión a la base de datos. **No incluye todavía** operaciones CRUD completas ni la integración funcional entre frontend, backend y base de datos — esto se desarrollará en las siguientes fases del proyecto.
+```powershell
+Copy-Item .env.example .env
+python scripts/check_env.py
+uvicorn app.main:app --reload
+```
+
+En macOS/Linux, usa `cp .env.example .env` en lugar de `Copy-Item`.
+
+Direcciones locales después de iniciar Uvicorn:
+
+- Interfaz: http://127.0.0.1:8000/app/
+- Catálogo: http://127.0.0.1:8000/app/catalogo.html
+- Administración de productos: http://127.0.0.1:8000/app/admin.html
+- Documentación de API: http://127.0.0.1:8000/docs
+- Estado de API: http://127.0.0.1:8000/health
+- Estado de base de datos: http://127.0.0.1:8000/health/db
+
+La comprobación `/health/db` requiere una conexión funcional a SQL Server y que exista `TramaDB`.
+
+## 3. Ejecutar pruebas automatizadas
+
+Las pruebas de catálogo usan SQLite en memoria; no necesitan conectarse a SQL Server, pero sí instalar las dependencias del archivo requirements.
+
+Desde la carpeta `backend`, con el entorno virtual activo:
+
+```bash
+python -m pytest -q
+```
+
+Las pruebas deben ejecutarse en el entorno local antes de considerar validada una entrega. La existencia de pruebas en el repositorio no significa que hayan pasado en todas las máquinas.
+
+## Endpoints del catálogo
+
+| Método | Ruta | Propósito |
+|---|---|---|
+| GET | `/categorias` | Listar categorías |
+| POST | `/categorias` | Crear categoría |
+| GET | `/productos` | Listar productos, con paginación y filtros |
+| GET | `/productos/{producto_id}` | Consultar producto |
+| POST | `/productos` | Crear producto |
+| PATCH | `/productos/{producto_id}` | Actualizar campos del producto |
+| GET | `/health` | Verificar proceso API |
+| GET | `/health/db` | Verificar conexión con base de datos |
+
+## Modelo de datos
+
+El esquema relacional contempla Usuarios, Categorías, Productos, Carritos, elementos de carrito, Pedidos, elementos de pedido, Pagos, Facturas y Notificaciones. Las tablas existen en el diseño SQL; que estén definidas no implica que todos sus flujos de negocio estén implementados en la API.
+
+## Consideraciones antes de una entrega
+
+- Ejecutar las pruebas y registrar sus resultados reales.
+- Probar la conexión con SQL Server usando la configuración local.
+- No publicar credenciales reales ni utilizar hashes de demostración como credenciales funcionales.
+- Proteger los endpoints de escritura con autenticación y autorización antes de desplegar.
+- Documentar como implementadas únicamente las funciones verificadas; distinguir claramente los requisitos diseñados de los desarrollados.
