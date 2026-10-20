@@ -8,11 +8,12 @@ Sistema para una plataforma de comercio electrónico orientado a catálogo, carr
 
 | Funcionalidad | Estado |
 |---|---|
-| Base de datos relacional en SQL Server (10 tablas, restricciones, datos de prueba) | Implementado |
+| Base de datos relacional en SQL Server (10 tablas, restricciones, índices, datos de prueba) | Implementado |
+| Generador de datos de demostración (catálogo, usuarios y pedidos sintéticos) | Implementado |
 | Modelos, esquemas de validación y repositorios | Implementado |
 | **Consultar catálogo** (búsqueda por nombre y filtro por categoría) — RF04 | **Implementado** |
 | **Registrar productos** con validación en pantalla, API y base de datos — RF05 (parcial) | **Implementado** |
-| Pruebas automatizadas (62) y pruebas de la interfaz | Implementado |
+| Pruebas automatizadas (68): validación, repositorios, API y servicio de la interfaz | Implementado |
 | Registro e inicio de sesión, roles — RF01 a RF03 | Pendiente |
 | Carrito, pedidos, pagos, facturas, notificaciones — RF06 a RF12 | Pendiente |
 | Microservicios, API Gateway, mensajería asíncrona y patrón Saga | Pendiente (solo diseño) |
@@ -37,17 +38,20 @@ trama-comercio-distribuido/
 │   └── js/                      # api.js (cliente de la API), inicio.js, catalogo.js, admin.js
 ├── database/
 │   ├── schema.sql               # Crea TramaDB y sus tablas (repetible)
-│   └── seed.sql                 # Datos de prueba (repetible)
+│   ├── seed.sql                 # Datos de prueba (repetible)
+│   └── migrations/
+│       └── 001_indices.sql      # Índices para consultas con muchos datos (repetible)
 ├── backend/
 │   ├── app/
 │   │   ├── main.py              # Aplicación FastAPI; sirve la API y la interfaz
 │   │   ├── database.py          # Conexión a SQL Server
 │   │   ├── models.py            # Modelos ORM (reflejan schema.sql)
+│   │   ├── datos_demo.py        # Lógica del generador de datos de demostración
 │   │   ├── enums.py, exceptions.py
 │   │   ├── schemas/             # Validación de entrada y salida (Pydantic)
 │   │   ├── repositories/        # Acceso a datos
 │   │   └── routers/             # Endpoints: health, categorías, productos
-│   ├── scripts/                 # check_env.py, check_models.py
+│   ├── scripts/                 # check_env.py, check_models.py, generar_datos.py
 │   ├── tests/                   # Pruebas automatizadas
 │   ├── requirements.txt, requirements-dev.txt
 │   └── .env.example
@@ -80,6 +84,7 @@ Tipografías: Poppins (títulos) e Inter (texto), cargadas desde Google Fonts.
 1. En SSMS conéctate a tu instancia (por ejemplo `localhost\SQLEXPRESS`).
 2. Abre y ejecuta `database/schema.sql` y después `database/seed.sql`. Ambos se pueden ejecutar varias veces sin dañar los datos.
 3. Comprueba: `USE TramaDB; SELECT * FROM Productos;` debe mostrar 4 productos.
+4. *(Opcional, recomendado con muchos datos)* Ejecuta `database/migrations/001_indices.sql` para crear los índices de búsqueda y filtrado. También es repetible.
 
 ## 2. Backend
 
@@ -130,9 +135,19 @@ Códigos de error: `422` datos inválidos, `404` recurso inexistente, `409` conf
 Desde `backend`, con el entorno virtual activo:
 
 ```powershell
-pytest                          # 62 pruebas (SQLite en memoria; no tocan SQL Server)
+pytest                          # 68 pruebas (SQLite en memoria; no tocan SQL Server)
 python scripts/check_models.py  # verifica la capa de datos contra SQL Server (no deja datos)
 ```
+
+### Datos de demostración (opcional)
+
+Para probar la búsqueda y la paginación con un catálogo grande, desde `backend` y con el entorno virtual activo:
+
+```powershell
+python scripts/generar_datos.py --productos 1000 --usuarios 50 --pedidos 200
+```
+
+Los números son **totales deseados**: si la base ya tiene 4 productos y pides 1000, se crean 996; ejecutarlo de nuevo no agrega nada. Con la misma `--semilla` se obtienen los mismos datos. Todo ocurre en una sola transacción (si algo falla, no se guarda nada) y los usuarios generados no pueden iniciar sesión.
 
 ## Solución de problemas
 
