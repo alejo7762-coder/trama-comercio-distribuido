@@ -13,8 +13,8 @@
   <div class="logo"><span class="logo-mark"></span>TRAMA</div>
   <nav>
     <a href="index.html">Inicio</a>
-    <a href="catalogo.html">Catálogo</a>
-    <a href="admin.html" aria-current="page">Administrar productos</a>
+    <a href="catalogo.html">Catálogo</a><a href="carrito.html">Carrito</a><a href="cuenta.html" data-auth>Ingresar / registrarse</a>
+    <a href="admin.html" data-admin aria-current="page" hidden>Administración</a>
     <a href="/docs" target="_blank" rel="noopener">API (docs)</a>
   </nav>
   <span id="estado-api" class="estado-api" role="status">Verificando API…</span>
@@ -25,7 +25,7 @@
     <h2>Registrar un producto</h2>
     <p>Los datos se validan en el formulario, en la API y en la base de datos antes de guardarse.</p>
   </div>
-  <div class="alerta aviso">Esta pantalla aún no exige inicio de sesión. Se restringirá al rol administrador cuando se implemente la autenticación.</div>
+  <div class="alerta aviso">Acceso exclusivo para cuentas con rol ADMIN. El servidor valida los permisos en cada operación.</div>
   <div id="aviso" class="alerta" role="alert" hidden></div>
 
   <form id="form-producto" class="form-panel" novalidate>
@@ -52,14 +52,14 @@
         <span class="error"></span>
       </label>
     </div>
-    <p style="margin:20px 0 0"><button id="guardar" class="btn btn-primary" type="submit">Guardar producto</button></p>
+    <p style="margin:20px 0 0"><button id="guardar" class="btn btn-primary" type="submit">Guardar producto</button> <button id="cancelar-edicion" class="btn secondary" type="button" hidden>Cancelar edición</button></p>
   </form>
 
   <div class="section-head"><h2>Inventario actual</h2></div>
   <div class="tabla-scroll">
     <table class="tabla">
-      <thead><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th class="num">Precio</th><th class="num">Stock</th></tr></thead>
-      <tbody id="tabla-productos"><tr><td colspan="5">Cargando…</td></tr></tbody>
+      <thead><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th class="num">Precio</th><th class="num">Stock</th><th>Acciones</th></tr></thead>
+      <tbody id="tabla-productos"><tr><td colspan="6">Cargando…</td></tr></tbody>
     </table>
   </div>
 </main>
