@@ -14,8 +14,8 @@ router=APIRouter(prefix="/pedidos",tags=["Pedidos"])
 
 @router.post("/checkout", response_model=PedidoRead, status_code=201)
 def checkout(datos:CheckoutCreate, usuario:Usuario=Depends(usuario_actual), db:Session=Depends(get_db)):
-    if datos.metodo_pago not in ("CONTRAENTREGA", "SIMULADO"):
-        raise HTTPException(422,"Método no disponible. Use CONTRAENTREGA o SIMULADO.")
+    if datos.metodo_pago != "CONTRAENTREGA":
+        raise HTTPException(422,"En esta versión solo está disponible el pago contraentrega.")
     direccion=datos.direccion_envio.strip(); telefono=datos.telefono_contacto.strip()
     carrito=db.query(Carrito).filter_by(UsuarioID=usuario.UsuarioID).first()
     if not carrito: raise HTTPException(400,"El carrito está vacío")
@@ -29,14 +29,14 @@ def checkout(datos:CheckoutCreate, usuario:Usuario=Depends(usuario_actual), db:S
             if ci.Cantidad > p.Stock: raise HTTPException(409,f"Stock insuficiente para {p.Nombre}. Disponible: {p.Stock}")
             precio=Decimal(str(p.Precio)); subtotal=precio*ci.Cantidad
             # UPDATE condicional atómico: evita stock negativo aun con compras concurrentes.
-            result=db.execute(update(Producto).where(Producto.ProductoID==p.ProductoID,Producto.Stock>=ci.Cantidad).values(Stock=Producto.Stock-ci.Cantidad))
+            result=db.execute(update(Producto).where(Producto.ProductoID==p.ProductoID,Producto.Stock>=ci.Cantidad,Producto.Activo.is_(True)).values(Stock=Producto.Stock-ci.Cantidad))
             if result.rowcount != 1: raise HTTPException(409,f"El stock de {p.Nombre} cambió. Actualiza el carrito.")
             detalles.append((p.ProductoID,p.Nombre,ci.Cantidad,precio,subtotal)); total += subtotal
         pedido=Pedido(UsuarioID=usuario.UsuarioID,Estado="PENDIENTE",Total=total,DireccionEnvio=direccion,TelefonoContacto=telefono)
         db.add(pedido); db.flush()
         for pid,nombre,cantidad,precio,subtotal in detalles:
             db.add(PedidoItem(PedidoID=pedido.PedidoID,ProductoID=pid,Cantidad=cantidad,PrecioUnitario=precio))
-        db.add(Pago(PedidoID=pedido.PedidoID,Monto=total,MetodoPago="CONTRAENTREGA" if datos.metodo_pago=="CONTRAENTREGA" else "PSE",Estado="PENDIENTE"))
+        db.add(Pago(PedidoID=pedido.PedidoID,Monto=total,MetodoPago="CONTRAENTREGA",Estado="PENDIENTE"))
         db.add(Factura(PedidoID=pedido.PedidoID,NumeroFactura=f"TR-{datetime.utcnow():%Y%m%d}-{pedido.PedidoID:06d}"))
         db.add(Notificacion(UsuarioID=usuario.UsuarioID,PedidoID=pedido.PedidoID,Mensaje=f"Pedido #{pedido.PedidoID} registrado correctamente."))
         for ci in items: db.delete(ci)
