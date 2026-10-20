@@ -5,13 +5,14 @@ Estado actual: estructura base (conexión a SQL Server y verificación de
 estado). Las rutas de negocio se agregan fase por fase.
 """
 
-import logging
+from pathlib import Path
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.exceptions import ConflictoError, NoEncontradoError
-from app.routers import health
+from app.routers import categorias, health, productos
 
 logging.basicConfig(
     level=logging.INFO,
@@ -25,18 +26,14 @@ app = FastAPI(
 )
 
 app.include_router(health.router, tags=["Estado del sistema"])
+app.include_router(categorias.router)
+app.include_router(productos.router)
+
+FRONTEND_DIR = Path(__file__).resolve().parents[2] / "frontend"
+if FRONTEND_DIR.is_dir():
+    app.mount("/app", StaticFiles(directory=FRONTEND_DIR, html=True), name="interfaz")
 
 
-@app.get("/", tags=["Estado del sistema"])
+@app.get("/", include_in_schema=False)
 def root():
-    return {"mensaje": "API de Trama en construcción", "documentacion": "/docs"}
-
-
-@app.exception_handler(NoEncontradoError)
-async def manejar_no_encontrado(request: Request, exc: NoEncontradoError):
-    return JSONResponse(status_code=404, content={"detail": str(exc)})
-
-
-@app.exception_handler(ConflictoError)
-async def manejar_conflicto(request: Request, exc: ConflictoError):
-    return JSONResponse(status_code=409, content={"detail": str(exc)})
+    return RedirectResponse(url="/app/")
