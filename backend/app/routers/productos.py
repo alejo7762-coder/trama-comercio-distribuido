@@ -54,8 +54,8 @@ def eliminar_producto(producto_id: int = Path(gt=0), _: object = Depends(adminis
     from app.models import PedidoItem, CarritoItem
     vendido = db.query(PedidoItem).filter(PedidoItem.ProductoID == producto_id).first()
     if vendido:
+        producto.Activo = False
         producto.Stock = 0
-        producto.Nombre = f"{producto.Nombre} [INACTIVO]"
         confirmar(db)
         return None
     db.query(CarritoItem).filter(CarritoItem.ProductoID == producto_id).delete(synchronize_session=False)
