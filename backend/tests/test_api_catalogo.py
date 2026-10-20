@@ -130,8 +130,8 @@ class TestProductos:
 
 class TestInterfazWeb:
     @pytest.mark.parametrize("ruta", ["/app/", "/app/catalogo.html", "/app/admin.html",
-                                      "/app/js/api.js", "/app/js/catalogo.js", "/app/js/admin.js",
-                                      "/app/css/estilos.css"])
+                                      "/app/js/api.js", "/app/js/catalogo.js", "/app/js/admin.js", "/app/js/cuenta.js", "/app/js/carrito.js",
+                                      "/app/cuenta.html", "/app/carrito.html", "/app/css/estilos.css"])
     def test_archivos_estaticos_servidos(self, client, ruta):
         assert client.get(ruta).status_code == 200
 
