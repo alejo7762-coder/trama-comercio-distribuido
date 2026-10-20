@@ -1,12 +1,12 @@
 """Esquemas de usuario; las respuestas nunca exponen PasswordHash."""
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, SecretStr, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from app.enums import Rol
 
 class UsuarioCreate(BaseModel):
     nombre: str = Field(min_length=1, max_length=100)
     correo: EmailStr
-    password: SecretStr = Field(min_length=8, max_length=128, repr=False)
+    password: str = Field(min_length=8, max_length=128, repr=False)
     @field_validator("nombre")
     @classmethod
     def limpiar_nombre(cls, v):
