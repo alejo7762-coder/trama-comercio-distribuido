@@ -27,6 +27,16 @@
     card.appendChild(api.el("div", "precio", api.formatoPesos.format(Number(p.precio))));
     const [texto, clase] = etiquetaStock(p.stock);
     card.appendChild(api.el("span", "stock " + clase, texto));
+    const boton = api.el("button", null, p.stock > 0 ? "Agregar al carrito" : "Agotado");
+    boton.disabled = p.stock <= 0;
+    boton.addEventListener("click", async function () {
+      if (!api.token()) { location.href = "cuenta.html"; return; }
+      boton.disabled = true;
+      try { await api.agregarCarrito(p.producto_id, 1); boton.textContent = "Agregado ✓"; }
+      catch (e) { if (e.status === 401) location.href = "cuenta.html"; else alert(e.message); }
+      finally { setTimeout(function(){ boton.disabled = p.stock <= 0; if (!boton.disabled) boton.textContent = "Agregar al carrito"; }, 1200); }
+    });
+    card.appendChild(boton);
     return card;
   }
 
@@ -51,6 +61,7 @@
 
   async function iniciar() {
     api.mostrarEstado("estado-api");
+    api.actualizarNavegacion();
     try {
       const categorias = await api.listarCategorias();
       categorias.forEach(function (c) {
