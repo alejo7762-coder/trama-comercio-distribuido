@@ -4,7 +4,7 @@ from app.exceptions import NoEncontradoError
 from app.models import Categoria, Producto
 
 def listar(db: Session, skip: int = 0, limit: int = 50, categoria_id=None, buscar=None):
-    q = db.query(Producto).options(joinedload(Producto.categoria))
+    q = db.query(Producto).options(joinedload(Producto.categoria)).filter(Producto.Activo.is_(True))
     if categoria_id is not None: q = q.filter(Producto.CategoriaID == categoria_id)
     if buscar and buscar.strip():
         termino = buscar.strip().replace("%", "\\%").replace("_", "\\_")
@@ -12,14 +12,14 @@ def listar(db: Session, skip: int = 0, limit: int = 50, categoria_id=None, busca
     return q.order_by(Producto.ProductoID).offset(skip).limit(limit).all()
 
 def obtener_por_id(db: Session, producto_id: int):
-    return db.query(Producto).options(joinedload(Producto.categoria)).filter(Producto.ProductoID == producto_id).first()
+    return db.query(Producto).options(joinedload(Producto.categoria)).filter(Producto.ProductoID == producto_id, Producto.Activo.is_(True)).first()
 
 def crear(db: Session, datos):
     if db.query(Categoria).filter(Categoria.CategoriaID == datos.categoria_id).first() is None:
         from app.exceptions import NoEncontradoError
         raise NoEncontradoError(f"La categoría {datos.categoria_id} no existe")
     valores = datos.model_dump()
-    obj = Producto(Nombre=valores["nombre"], Descripcion=valores.get("descripcion"), Precio=valores["precio"], Stock=valores["stock"], CategoriaID=valores["categoria_id"])
+    obj = Producto(Nombre=valores["nombre"], Descripcion=valores.get("descripcion"), Precio=valores["precio"], Stock=valores["stock"], CategoriaID=valores["categoria_id"], Activo=True)
     db.add(obj); db.flush()
     return obtener_por_id(db, obj.ProductoID)
 
