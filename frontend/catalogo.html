@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0C1B33">
+<title>Catálogo — Trama</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html" aria-label="Trama, ir al inicio"><img class="logo" src="img/logo-web.png" alt="Trama — Tu mundo, en un solo clic" width="187" height="52"></a>
+    <nav aria-label="Principal">
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html" aria-current="page">Catálogo</a>
+      <a href="admin.html">Administrar</a>
+      <a href="/docs" target="_blank" rel="noopener">API (docs)</a>
+    </nav>
+    <span id="estado-api" class="estado-api" role="status">Verificando API…</span>
+  </div>
+</header>
+
+<div class="page-hero"><div class="inner">
+  <div class="section-head">
+    <div class="kicker">RF04 · Consultar catálogo</div>
+    <h2>Catálogo de productos</h2>
+    <p>Productos leídos desde SQL Server a través de la API de Trama.</p>
+  </div>
+</div></div>
+<main id="contenido" class="page">
+  <div class="panel toolbar">
+    <label class="campo">Buscar por nombre
+      <input id="buscar" type="search" placeholder="Ej. teclado" autocomplete="off" maxlength="100">
+    </label>
+    <label class="campo">Categoría
+      <select id="categoria"><option value="">Todas</option></select>
+    </label>
+    <span id="conteo" class="conteo" aria-live="polite"></span>
+  </div>
+  <div id="productos" class="productos" aria-live="polite"></div>
+</main>
+<footer>
+  <div class="footer-inner">
+    <div class="marca"><img src="img/logo-icono.png" alt="" width="36" height="36"><span>Trama — Proyecto de Sistemas Transaccionales, Universidad Manuela Beltrán</span></div>
+    <span class="mono">v0.2 · segundo avance</span>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/catalogo.js"></script>
+</body>
+</html>

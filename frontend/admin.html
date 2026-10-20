@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0C1B33">
+<title>Administrar productos — Trama</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html" aria-label="Trama, ir al inicio"><img class="logo" src="img/logo-web.png" alt="Trama — Tu mundo, en un solo clic" width="187" height="52"></a>
+    <nav aria-label="Principal">
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="admin.html" aria-current="page">Administrar</a>
+      <a href="/docs" target="_blank" rel="noopener">API (docs)</a>
+    </nav>
+    <span id="estado-api" class="estado-api" role="status">Verificando API…</span>
+  </div>
+</header>
+
+<div class="page-hero"><div class="inner">
+  <div class="section-head">
+    <div class="kicker">RF05 · Gestionar productos e inventario</div>
+    <h2>Registrar un producto</h2>
+    <p>Los datos se validan en el formulario, en la API y en la base de datos antes de guardarse.</p>
+  </div>
+</div></div>
+<main id="contenido" class="page">
+  <div class="alerta aviso">Esta pantalla aún no exige inicio de sesión. Se restringirá al rol administrador cuando se implemente la autenticación.</div>
+  <div id="aviso" class="alerta" role="alert" hidden></div>
+
+  <div class="admin-grid">
+    <form id="form-producto" class="form-panel" novalidate>
+      <div class="form-grid">
+        <label class="campo completo">Nombre *
+          <input id="nombre" name="nombre" type="text" maxlength="150" required>
+          <span class="error"></span>
+        </label>
+        <label class="campo completo">Categoría *
+          <select id="categoria_id" name="categoria_id" required><option value="">Seleccione…</option></select>
+          <span class="error"></span>
+        </label>
+        <label class="campo">Precio (COP) *
+          <input id="precio" name="precio" type="text" inputmode="decimal" placeholder="49900">
+          <span class="ayuda">Sin puntos de miles. Decimales con punto.</span>
+          <span class="error"></span>
+        </label>
+        <label class="campo">Stock inicial *
+          <input id="stock" name="stock" type="text" inputmode="numeric" placeholder="10">
+          <span class="error"></span>
+        </label>
+        <label class="campo completo">Descripción
+          <textarea id="descripcion" name="descripcion" rows="3" maxlength="500"></textarea>
+          <span class="error"></span>
+        </label>
+      </div>
+      <p style="margin:22px 0 0"><button id="guardar" class="btn btn-primary" type="submit">Guardar producto</button></p>
+    </form>
+    <aside class="side-note">
+      <h3>Cómo se protege el dato</h3>
+      <ol>
+        <li><strong>En pantalla:</strong> el formulario revisa los campos antes de enviar.</li>
+        <li><strong>En la API:</strong> el servidor valida de nuevo tipos, rangos y que la categoría exista.</li>
+        <li><strong>En la base de datos:</strong> las restricciones rechazan precios no positivos o stock negativo.</li>
+      </ol>
+    </aside>
+  </div>
+
+  <div class="section-head" style="margin-bottom:16px"><h2 style="font-size:24px">Inventario actual</h2></div>
+  <div class="tabla-scroll">
+    <table class="tabla">
+      <thead><tr><th>Código</th><th>Nombre</th><th>Categoría</th><th class="num">Precio</th><th class="num">Stock</th></tr></thead>
+      <tbody id="tabla-productos"><tr><td colspan="5">Cargando…</td></tr></tbody>
+    </table>
+  </div>
+</main>
+<footer>
+  <div class="footer-inner">
+    <div class="marca"><img src="img/logo-icono.png" alt="" width="36" height="36"><span>Trama — Proyecto de Sistemas Transaccionales, Universidad Manuela Beltrán</span></div>
+    <span class="mono">v0.2 · segundo avance</span>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0C1B33">
+<title>Trama — Tu mundo, en un solo clic</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html" aria-label="Trama, ir al inicio"><img class="logo" src="img/logo-web.png" alt="Trama — Tu mundo, en un solo clic" width="187" height="52"></a>
+    <nav aria-label="Principal">
+      <a href="index.html" aria-current="page">Inicio</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="admin.html">Administrar</a>
+      <a href="/docs" target="_blank" rel="noopener">API (docs)</a>
+    </nav>
+    <span id="estado-api" class="estado-api" role="status">Verificando API…</span>
+  </div>
+</header>
+
+<main id="contenido">
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow">Sistema transaccional distribuido</div>
+      <h1>Tu mundo,<br><span class="grad-text">en un solo clic</span></h1>
+      <p class="lead">Trama es una plataforma de comercio electrónico que gestiona catálogo, carrito, pedidos y pagos con servicios independientes, diseñada para mantener la disponibilidad y la consistencia de la información.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="catalogo.html">Ver catálogo</a>
+        <a class="btn" href="admin.html">Registrar productos</a>
+      </div>
+      <div class="chips"><span class="chips-label">Construido con</span><span class="chip">FastAPI</span><span class="chip">SQL Server</span><span class="chip">HTML · CSS · JS</span></div>
+    </div>
+    <div class="showcase" aria-label="Novedades del catálogo">
+      <div class="showcase-top"><strong>Del catálogo</strong><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
+      <div id="showcase-lista" class="showcase-lista"><p class="showcase-vacio">Cargando productos…</p></div>
+      <a class="showcase-pie" href="catalogo.html">Ver todos los productos →</a>
+    </div>
+  </div>
+</div>
+
+<section id="elementos">
+  <div class="section-head">
+    <div class="kicker">01 · Elementos principales</div>
+    <h2>Seis servicios, una experiencia de compra</h2>
+    <p>Cada bloque del sistema está pensado para operar de forma independiente y escalar por separado, según la carga que reciba.</p>
+  </div>
+  <div class="cards tres">
+    <div class="card">
+      <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 9.4 7.5 4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg></div>
+      <span class="tag">primer avance</span>
+      <h3>Catálogo</h3>
+      <p>Productos, categorías e inventario. Ya se consulta y se registra desde la interfaz con datos de SQL Server. MongoDB está previsto en el diseño.</p>
+    </div>
+    <div class="card">
+      <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <span class="tag pendiente">diseñado</span>
+      <h3>Usuarios</h3>
+      <p>Registro, autenticación y roles de cliente y administrador.</p>
+    </div>
+    <div class="card">
+      <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg></div>
+      <span class="tag pendiente">diseñado</span>
+      <h3>Carrito</h3>
+      <p>Administración del carrito de cada usuario mientras navega el catálogo.</p>
+    </div>
+    <div class="card">
+      <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
+      <span class="tag pendiente">diseñado</span>
+      <h3>Pedidos</h3>
+      <p>Registro, confirmación y consulta del estado del pedido, coordinado con el patrón Saga.</p>
+    </div>
+    <div class="card">
+      <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+      <span class="tag pendiente">diseñado</span>
+      <h3>Pagos</h3>
+      <p>Procesamiento con control transaccional ACID en SQL Server, evitando cobros duplicados.</p>
+    </div>
+    <div class="card">
+      <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+      <span class="tag pendiente">diseñado</span>
+      <h3>Notificaciones</h3>
+      <p>Confirmaciones de compra y cambios de estado, entregados de forma asíncrona.</p>
+    </div>
+  </div>
+</section>
+
+<section id="avance">
+  <div class="section-head">
+    <div class="kicker">02 · Estado del proyecto</div>
+    <h2>Lo que ya funciona y lo que sigue</h2>
+    <p>Este avance conecta la interfaz, la API y la base de datos en una primera operación completa.</p>
+  </div>
+  <ul class="progreso">
+    <li><span class="tag">implementado</span><strong>Consultar catálogo</strong>Listado con búsqueda y filtro por categoría desde SQL Server.</li>
+    <li><span class="tag">implementado</span><strong>Registrar productos</strong>Formulario con validación en pantalla, API y base de datos.</li>
+    <li><span class="tag pendiente">pendiente</span><strong>Usuarios e inicio de sesión</strong>Registro, autenticación y roles.</li>
+    <li><span class="tag pendiente">pendiente</span><strong>Carrito, pedidos y pagos</strong>Lógica transaccional, idempotencia y Saga.</li>
+  </ul>
+</section>
+
+<section id="arquitectura">
+  <div class="section-head">
+    <div class="kicker">03 · Propuesta de navegación</div>
+    <h2>Cómo viaja una solicitud dentro del sistema</h2>
+    <p>Ruta prevista de la interacción del usuario, desde la interfaz web hasta la base de datos. Es el diseño objetivo; hoy la interfaz se comunica directamente con la API.</p>
+  </div>
+  <div class="flow">
+    <div class="flow-step"><div class="dot">Us</div><span>Usuario</span></div><div class="flow-arrow"></div>
+    <div class="flow-step"><div class="dot">If</div><span>Interfaz web</span></div><div class="flow-arrow"></div>
+    <div class="flow-step"><div class="dot">Gw</div><span>API Gateway</span></div><div class="flow-arrow"></div>
+    <div class="flow-step"><div class="dot">Ms</div><span>Microservicios</span></div><div class="flow-arrow"></div>
+    <div class="flow-step"><div class="dot">Mq</div><span>Mensajería</span></div><div class="flow-arrow"></div>
+    <div class="flow-step"><div class="dot">Db</div><span>Bases de datos</span></div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="footer-inner">
+    <div class="marca"><img src="img/logo-icono.png" alt="" width="36" height="36"><span>Trama — Proyecto de Sistemas Transaccionales, Universidad Manuela Beltrán</span></div>
+    <span class="mono">v0.2 · segundo avance</span>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/inicio.js"></script>
+</body>
+</html>

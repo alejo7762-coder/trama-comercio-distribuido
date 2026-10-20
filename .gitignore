@@ -1,0 +1,21 @@
+# Entornos y dependencias de Python
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Variables de entorno reales (nunca subir credenciales)
+.env
+backend/.env
+
+# Editor y sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Registros
+*.log
