@@ -24,7 +24,9 @@ CREATE TABLE Usuarios (
     PasswordHash    NVARCHAR(255)   NOT NULL,
     Rol             VARCHAR(20)     NOT NULL DEFAULT 'CLIENTE'
                         CONSTRAINT CK_Usuarios_Rol CHECK (Rol IN ('CLIENTE', 'ADMIN')),
-    FechaRegistro   DATETIME2       NOT NULL DEFAULT SYSDATETIME()
+    FechaRegistro   DATETIME2       NOT NULL DEFAULT SYSDATETIME(),
+    Telefono        NVARCHAR(30)    NOT NULL DEFAULT '',
+    Direccion       NVARCHAR(300)   NOT NULL DEFAULT ''
 );
 GO
 
@@ -50,6 +52,7 @@ CREATE TABLE Productos (
     Stock           INT             NOT NULL CONSTRAINT CK_Productos_Stock CHECK (Stock >= 0),
     CategoriaID     INT             NOT NULL,
     FechaCreacion   DATETIME2       NOT NULL DEFAULT SYSDATETIME(),
+    Activo          BIT             NOT NULL DEFAULT 1,
     CONSTRAINT FK_Productos_Categorias FOREIGN KEY (CategoriaID)
         REFERENCES Categorias(CategoriaID)
         ON DELETE NO ACTION
@@ -101,6 +104,8 @@ CREATE TABLE Pedidos (
     Estado          VARCHAR(20)     NOT NULL DEFAULT 'PENDIENTE'
                         CONSTRAINT CK_Pedidos_Estado CHECK (Estado IN ('PENDIENTE', 'PAGADO', 'ENVIADO', 'CANCELADO')),
     Total           DECIMAL(10,2)   NOT NULL CONSTRAINT CK_Pedidos_Total CHECK (Total >= 0),
+    DireccionEnvio  NVARCHAR(300)   NOT NULL DEFAULT '',
+    TelefonoContacto NVARCHAR(30)  NOT NULL DEFAULT '',
     CONSTRAINT FK_Pedidos_Usuarios FOREIGN KEY (UsuarioID)
         REFERENCES Usuarios(UsuarioID)
         ON DELETE NO ACTION
