@@ -4,9 +4,8 @@ Punto de entrada del backend de Trama.
 Estado actual: estructura base (conexión a SQL Server y verificación de
 estado). Las rutas de negocio se agregan fase por fase.
 """
-
+import logging
 from pathlib import Path
-
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
