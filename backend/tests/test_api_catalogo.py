@@ -5,6 +5,8 @@ que también se comprueba que los datos realmente se confirman (commit).
 """
 
 import pytest
+import os
+from types import SimpleNamespace
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
@@ -12,10 +14,12 @@ from sqlalchemy.pool import StaticPool
 
 from app.database import Base, get_db
 from app.main import app
+from app.dependencies import administrador_actual
 
 
 @pytest.fixture()
 def client():
+    os.environ["JWT_SECRET_KEY"] = "test-secret-key-that-is-at-least-32-characters-long"
     engine = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
 
     @event.listens_for(engine, "connect")
@@ -33,6 +37,7 @@ def client():
             sesion.close()
 
     app.dependency_overrides[get_db] = _get_db
+    app.dependency_overrides[administrador_actual] = lambda: SimpleNamespace(Rol="ADMIN")
     yield TestClient(app)
     app.dependency_overrides.clear()
     engine.dispose()
