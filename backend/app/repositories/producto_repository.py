@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
 from app.exceptions import NoEncontradoError
@@ -23,6 +23,14 @@ def obtener_por_id(db: Session, producto_id: int) -> Optional[Producto]:
     )
     return db.scalar(stmt)
 
+def contar(db: Session, categoria_id: Optional[int] = None, buscar: Optional[str] = None) -> int:
+    """Total de productos que cumplen los mismos filtros que listar() (sin paginar)."""
+    stmt = select(func.count()).select_from(Producto)
+    if categoria_id is not None:
+        stmt = stmt.where(Producto.CategoriaID == categoria_id)
+    if buscar and buscar.strip():
+        stmt = stmt.where(Producto.Nombre.contains(buscar.strip(), autoescape=True))
+    return db.scalar(stmt) or 0
 
 def listar(db: Session, skip: int = 0, limit: int = 50,
            categoria_id: Optional[int] = None, buscar: Optional[str] = None) -> list[Producto]:
